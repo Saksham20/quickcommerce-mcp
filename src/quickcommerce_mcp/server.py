@@ -1,5 +1,6 @@
 """MCP tools for Blinkit, Zepto, Instamart, and BigBasket."""
 
+from contextlib import asynccontextmanager
 from typing import Annotated, Literal
 
 from mcp.server import MCPServer
@@ -12,8 +13,18 @@ from quickcommerce_mcp.sites import SITES
 
 SiteId = Literal["blinkit", "zepto", "instamart", "bigbasket"]
 
+
+@asynccontextmanager
+async def _lifespan(server: MCPServer):
+    try:
+        yield None
+    finally:
+        await browser.close()
+
+
 mcp = MCPServer(
     "quickcommerce",
+    lifespan=_lifespan,
     instructions=(
         "Use these tools to search Blinkit, Zepto, Swiggy Instamart, and BigBasket, "
         "compare prices, and add items to the website cart. Never ask the user for a "
