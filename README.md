@@ -13,6 +13,8 @@ The server drives a real Chromium window with [Playwright](https://playwright.de
 
 A cart created while that account is signed in is the cart the phone app shows. A cart created before sign-in stays in the browser only. `add_to_cart` stops after the click. It never opens payment.
 
+Blinkit and Zepto can refuse a datacenter address before the login page appears. The tool reports that as `blocked`. BigBasket and Instamart open in the window; set the delivery location there, then search again.
+
 If a tool returns `needs_login` or `needs_location`, finish that step in the open window and run the tool again.
 
 ## Tools

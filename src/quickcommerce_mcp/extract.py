@@ -31,6 +31,7 @@ LOGIN_PHRASES = (
 LOCATION_PHRASES = (
     "select delivery location",
     "select your location",
+    "select location",
     "search for your location",
     "search delivery location",
     "use current location",
@@ -40,6 +41,17 @@ LOCATION_PHRASES = (
     "set delivery location",
     "enter your area",
     "delivery location",
+)
+BLOCKED_PHRASES = (
+    "you have been blocked",
+    "access denied",
+    "request blocked",
+    "the request could not be satisfied",
+    "sorry, you have been blocked",
+)
+OUTAGE_PHRASES = (
+    "we'll be back shortly",
+    "we are fixing a temporary glitch",
 )
 
 
@@ -75,6 +87,10 @@ def classify(url: str, body_text: str, products: list[Product]) -> Status:
         return "ok"
     sample = body_text.lower()[:6000]
     location = url.lower()
+    if any(phrase in sample for phrase in BLOCKED_PHRASES):
+        return "blocked"
+    if any(phrase in sample for phrase in OUTAGE_PHRASES):
+        return "error"
     if any(phrase in sample for phrase in LOGIN_PHRASES) or any(
         part in location for part in ("/login", "/auth", "/signin")
     ):
@@ -97,11 +113,17 @@ def status_message(status: Status, site_name: str) -> str:
     if status == "needs_location":
         return (
             f"{site_name} needs a delivery location. Set it in the open browser window, then "
-            "run the tool again."
+            "run the tool again. Sign in there too if the page asks, using the same phone "
+            "number as the app. Do not paste the OTP into chat."
+        )
+    if status == "blocked":
+        return (
+            f"{site_name} refused this connection before a page opened. The block is on "
+            "the server address, so signing in from this window does not remove it."
         )
     if status == "not_found":
         return f"{site_name} did not show any product cards for this search."
-    return f"{site_name} could not be read."
+    return f"{site_name} showed an error page instead of products."
 
 
 def _clean_price(raw: str) -> str:

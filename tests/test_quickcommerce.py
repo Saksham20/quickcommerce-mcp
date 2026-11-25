@@ -37,6 +37,14 @@ def test_location_wall_is_reported_separately() -> None:
     assert status == "needs_location"
 
 
+def test_select_location_is_not_treated_as_an_empty_search() -> None:
+    assert classify("https://www.bigbasket.com/ps/?q=milk", "Select Location\nLogin/ Sign Up", []) == "needs_location"
+
+
+def test_bot_wall_is_reported_as_blocked() -> None:
+    assert classify("https://blinkit.com/s/?q=milk", "sorry, you have been blocked", []) == "blocked"
+
+
 def test_visible_products_mean_the_page_is_usable() -> None:
     product = parse_card("Banana\n₹40\nADD")
     assert product is not None

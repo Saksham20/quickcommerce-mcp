@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-Status = Literal["ok", "needs_login", "needs_location", "not_found", "error"]
+Status = Literal["ok", "needs_login", "needs_location", "blocked", "not_found", "error"]
 
 
 class Product(BaseModel):
